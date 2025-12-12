@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>中国古代建筑</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="index.html">首页</a>
+        <a href="list.html">建筑列表</a>
+        <a href="quiz.html">问答</a>
+        <a href="login.html">登录</a>
+    </div>
+
+    <div class="container">
+        <h1>中国古代建筑</h1>
+        
+        <div class="card">
+            <h2>建筑分类</h2>
+            <p><a href="list.html?type=民宿">民宿</a> | 
+               <a href="list.html?type=官府">官府</a> | 
+               <a href="list.html?type=皇宫">皇宫</a> | 
+               <a href="list.html?type=桥梁">桥梁</a></p>
+        </div>
+
+        <div id="list"></div>
+    </div>
+
+    <script>
+        // 加载建筑列表
+        fetch('api/get-architectures.php?limit=4')
+            .then(r => r.json())
+            .then(data => {
+                let html = '';
+                data.data.forEach(item => {
+                    html += '<div class="card">';
+                    html += '<h3>' + item.name + '</h3>';
+                    html += '<p>' + (item.description || '') + '</p>';
+                    html += '<a href="detail.html?id=' + item.id + '" class="btn">查看</a>';
+                    html += '</div>';
+                });
+                document.getElementById('list').innerHTML = html;
+            });
+    </script>
+</body>
+</html>

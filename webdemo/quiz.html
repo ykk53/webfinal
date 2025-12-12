@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>知识问答</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="index.html">首页</a>
+        <a href="list.html">建筑列表</a>
+        <a href="quiz.html">问答</a>
+        <a href="login.html">登录</a>
+    </div>
+
+    <div class="container">
+        <h1>知识问答</h1>
+        
+        <div class="card">
+            <p>答对：<strong id="correct">0</strong> | 答错：<strong id="wrong">0</strong></p>
+        </div>
+
+        <div class="card" id="quiz"></div>
+        
+        <button class="btn" onclick="loadQuiz()">下一题</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let currentQuiz = null;
+        let correct = 0, wrong = 0;
+
+        function loadQuiz() {
+            $.ajax({
+                url: 'api/get-quiz.php',
+                method: 'GET',
+                success: function(data) {
+                    currentQuiz = data.data;
+                    let html = '<h3>' + currentQuiz.question + '</h3>';
+                    html += '<ul class="list">';
+                    html += '<li><input type="radio" name="ans" value="A"> A. ' + currentQuiz.option_a + '</li>';
+                    html += '<li><input type="radio" name="ans" value="B"> B. ' + currentQuiz.option_b + '</li>';
+                    html += '<li><input type="radio" name="ans" value="C"> C. ' + currentQuiz.option_c + '</li>';
+                    html += '<li><input type="radio" name="ans" value="D"> D. ' + currentQuiz.option_d + '</li>';
+                    html += '</ul>';
+                    html += '<div id="result"></div>';
+                    $('#quiz').html(html);
+                    
+                    $('input[name="ans"]').on('click', function() {
+                        checkAnswer($(this).val());
+                    });
+                },
+                error: function() {
+                    $('#quiz').html('<div class="error">加载题目失败</div>');
+                }
+            });
+        }
+
+        function checkAnswer(ans) {
+            const isCorrect = ans === currentQuiz.correct_answer;
+            if (isCorrect) {
+                correct++;
+                $('#correct').text(correct);
+                $('#result').html('<div class="success">正确！</div>');
+            } else {
+                wrong++;
+                $('#wrong').text(wrong);
+                $('#result').html('<div class="error">错误！正确答案：' + currentQuiz.correct_answer + '</div>');
+            }
+            $('input[name="ans"]').prop('disabled', true);
+        }
+
+        $(document).ready(function() {
+            loadQuiz();
+        });
+    </script>
+</body>
+</html>

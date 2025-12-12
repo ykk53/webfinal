@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>建筑列表</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="index.html">首页</a>
+        <a href="list.html">建筑列表</a>
+        <a href="quiz.html">问答</a>
+        <a href="login.html">登录</a>
+    </div>
+
+    <div class="container">
+        <h1>建筑列表</h1>
+        
+        <div class="card">
+            <select id="typeFilter">
+                <option value="">全部</option>
+                <option value="民宿">民宿</option>
+                <option value="官府">官府</option>
+                <option value="皇宫">皇宫</option>
+                <option value="桥梁">桥梁</option>
+            </select>
+        </div>
+
+        <div id="list"></div>
+    </div>
+
+    <script>
+        // 获取URL参数
+        const params = new URLSearchParams(window.location.search);
+        const type = params.get('type');
+        if (type) document.getElementById('typeFilter').value = type;
+
+        // 加载列表
+        function loadList() {
+            const selectedType = document.getElementById('typeFilter').value;
+            const url = 'api/get-architectures.php' + (selectedType ? '?type=' + selectedType : '');
+            
+            fetch(url)
+                .then(r => r.json())
+                .then(data => {
+                    let html = '';
+                    data.data.forEach(item => {
+                        html += '<div class="card">';
+                        html += '<h3>' + item.name + '</h3>';
+                        html += '<p>' + item.type + ' | ' + (item.dynasty || '') + ' | ' + (item.location || '') + '</p>';
+                        html += '<p>' + (item.description || '') + '</p>';
+                        html += '<a href="detail.html?id=' + item.id + '" class="btn">查看详情</a>';
+                        html += '</div>';
+                    });
+                    document.getElementById('list').innerHTML = html;
+                });
+        }
+
+        document.getElementById('typeFilter').onchange = loadList;
+        loadList();
+    </script>
+</body>
+</html>

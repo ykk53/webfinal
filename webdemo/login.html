@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="index.html">首页</a>
+        <a href="list.html">建筑列表</a>
+        <a href="quiz.html">问答</a>
+        <a href="login.html">登录</a>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>用户登录</h2>
+            <div id="msg"></div>
+            
+            <form id="form">
+                <label>用户名</label>
+                <input type="text" id="username" required>
+                
+                <label>密码</label>
+                <input type="password" id="password" required>
+                
+                <label>类型</label>
+                <select id="userType">
+                    <option value="user">普通用户</option>
+                    <option value="admin">管理员</option>
+                </select>
+                
+                <button type="submit" class="btn">登录</button>
+            </form>
+            
+            <p><a href="register.html">注册新账号</a></p>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#form').on('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData();
+                formData.append('username', $('#username').val());
+                formData.append('password', $('#password').val());
+                formData.append('userType', $('#userType').val());
+                
+                $.ajax({
+                    url: 'api/login.php',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(res) {
+                        if (res.success) {
+                            $('#msg').html('<div class="success">' + res.message + '</div>');
+                            setTimeout(function() {
+                                window.location.href = 'index.html';
+                            }, 1000);
+                        } else {
+                            $('#msg').html('<div class="error">' + res.message + '</div>');
+                        }
+                    },
+                    error: function() {
+                        $('#msg').html('<div class="error">登录失败，请重试</div>');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

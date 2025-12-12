@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>建筑详情 - 中国古代建筑</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="navbar">
+        <div class="container">
+            <div class="logo">中国古代建筑</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="architecture-list.html">建筑展示</a></li>
+                    <li><a href="quiz.html">知识问答</a></li>
+                    <li><a href="user-center.html">个人中心</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <a href="login.html">登录</a>
+                <a href="register.html">注册</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 详情内容 -->
+    <div class="detail-container" id="detailContent">
+        <!-- 通过JavaScript动态加载 -->
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            
+            if (!id) {
+                $('#detailContent').html('<p style="text-align: center;">未找到建筑信息</p>');
+                return;
+            }
+            
+            $.ajax({
+                url: 'api/get-architecture-detail.php',
+                method: 'GET',
+                data: { id: id },
+                success: function(response) {
+                    if (response.success) {
+                        displayDetail(response.data);
+                    } else {
+                        $('#detailContent').html('<p style="text-align: center;">未找到建筑信息</p>');
+                    }
+                },
+                error: function() {
+                    $('#detailContent').html('<p style="text-align: center;">加载失败，请稍后再试</p>');
+                }
+            });
+        });
+        
+        function displayDetail(arch) {
+            const html = `
+                <h1 style="color: #8B0000; margin-bottom: 20px;">${arch.name}</h1>
+                <img src="${arch.image || 'images/placeholder.jpg'}" alt="${arch.name}" class="detail-image">
+                <div class="detail-meta">
+                    <div><strong>类型：</strong>${arch.type}</div>
+                    <div><strong>朝代：</strong>${arch.dynasty || '未知'}</div>
+                    <div><strong>地点：</strong>${arch.location || '未知'}</div>
+                </div>
+                <div class="detail-description">
+                    <h3 style="color: #8B0000; margin-bottom: 15px;">建筑简介</h3>
+                    <p>${arch.description || '暂无详细介绍'}</p>
+                </div>
+                <div style="margin-top: 30px; text-align: center;">
+                    <a href="architecture-list.html" class="btn">返回列表</a>
+                </div>
+            `;
+            $('#detailContent').html(html);
+        }
+    </script>
+</body>
+</html>

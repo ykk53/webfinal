@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>建筑展示 - 中国古代建筑</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="navbar">
+        <div class="container">
+            <div class="logo">中国古代建筑</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="architecture-list.html">建筑展示</a></li>
+                    <li><a href="quiz.html">知识问答</a></li>
+                    <li><a href="user-center.html">个人中心</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <a href="login.html">登录</a>
+                <a href="register.html">注册</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="container">
+        <h1 class="page-title" id="pageTitle">建筑展示</h1>
+        
+        <!-- 筛选选项 -->
+        <div style="text-align: center; margin-bottom: 30px;">
+            <select id="typeFilter" style="padding: 10px; font-size: 16px; border-radius: 4px; border: 1px solid #ddd;">
+                <option value="">全部类型</option>
+                <option value="民宿">民宿</option>
+                <option value="官府">官府</option>
+                <option value="皇宫">皇宫</option>
+                <option value="桥梁">桥梁</option>
+            </select>
+        </div>
+        
+        <!-- 建筑列表 -->
+        <div class="architecture-grid" id="architectureList">
+            <!-- 通过JavaScript动态加载 -->
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // 获取URL参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const type = urlParams.get('type');
+            
+            if (type) {
+                $('#typeFilter').val(type);
+                $('#pageTitle').text(type + ' - 建筑展示');
+            }
+            
+            // 加载建筑列表
+            loadArchitectures(type);
+            
+            // 筛选变化时重新加载
+            $('#typeFilter').on('change', function() {
+                const selectedType = $(this).val();
+                loadArchitectures(selectedType);
+                
+                if (selectedType) {
+                    $('#pageTitle').text(selectedType + ' - 建筑展示');
+                } else {
+                    $('#pageTitle').text('建筑展示');
+                }
+            });
+        });
+        
+        function loadArchitectures(type) {
+            const data = type ? { type: type } : {};
+            
+            $.ajax({
+                url: 'api/get-architectures.php',
+                method: 'GET',
+                data: data,
+                success: function(response) {
+                    if (response.success) {
+                        displayArchitectures(response.data);
+                    } else {
+                        $('#architectureList').html('<p style="text-align: center;">暂无数据</p>');
+                    }
+                },
+                error: function() {
+                    $('#architectureList').html('<p style="text-align: center;">加载失败，请稍后再试</p>');
+                }
+            });
+        }
+        
+        function displayArchitectures(architectures) {
+            if (architectures.length === 0) {
+                $('#architectureList').html('<p style="text-align: center;">暂无数据</p>');
+                return;
+            }
+            
+            let html = '';
+            architectures.forEach(function(arch) {
+                html += `
+                    <div class="architecture-card">
+                        <img src="${arch.image || 'images/placeholder.jpg'}" alt="${arch.name}">
+                        <div class="card-content">
+                            <h3>${arch.name}</h3>
+                            <div class="meta">
+                                <span>${arch.type} | ${arch.dynasty || '未知'} | ${arch.location || '未知'}</span>
+                            </div>
+                            <p class="description">${arch.description ? arch.description.substring(0, 100) + '...' : '暂无描述'}</p>
+                            <a href="architecture-detail.html?id=${arch.id}" class="btn" style="margin-top: 10px;">查看详情</a>
+                        </div>
+                    </div>
+                `;
+            });
+            $('#architectureList').html(html);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>建筑详情</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="index.html">首页</a>
+        <a href="list.html">建筑列表</a>
+        <a href="quiz.html">问答</a>
+        <a href="login.html">登录</a>
+    </div>
+
+    <div class="container">
+        <div id="detail"></div>
+        <a href="list.html" class="btn">返回列表</a>
+    </div>
+
+    <script>
+        const id = new URLSearchParams(window.location.search).get('id');
+        
+        fetch('api/get-architecture-detail.php?id=' + id)
+            .then(r => r.json())
+            .then(data => {
+                const item = data.data;
+                let html = '<div class="card">';
+                html += '<h1>' + item.name + '</h1>';
+                html += '<p><strong>类型：</strong>' + item.type + '</p>';
+                html += '<p><strong>朝代：</strong>' + (item.dynasty || '未知') + '</p>';
+                html += '<p><strong>地点：</strong>' + (item.location || '未知') + '</p>';
+                html += '<p>' + (item.description || '') + '</p>';
+                html += '</div>';
+                document.getElementById('detail').innerHTML = html;
+            });
+    </script>
+</body>
+</html>

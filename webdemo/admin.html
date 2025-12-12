@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理 - 中国古代建筑</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="navbar">
+        <div class="container">
+            <div class="logo">中国古代建筑 - 后台管理</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">返回首页</a></li>
+                    <li><a href="admin.html">后台管理</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <a href="#" id="logoutBtn">退出登录</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="container">
+        <h1 class="page-title">后台管理系统</h1>
+        
+        <div class="user-info">
+            <h2 style="color: #8B0000; margin-bottom: 20px;">功能模块</h2>
+            <p style="text-align: center; font-size: 18px; color: #666; padding: 50px 0;">
+                后台管理功能正在开发中...
+            </p>
+            
+            <div class="category-grid" style="margin-top: 30px;">
+                <div class="category-card">
+                    <h3>建筑管理</h3>
+                    <p>管理建筑信息的增删改查</p>
+                    <button class="btn" style="margin-top: 15px;" disabled>待开发</button>
+                </div>
+                <div class="category-card">
+                    <h3>题目管理</h3>
+                    <p>管理问答题目的增删改查</p>
+                    <button class="btn" style="margin-top: 15px;" disabled>待开发</button>
+                </div>
+                <div class="category-card">
+                    <h3>用户管理</h3>
+                    <p>查看和管理用户信息</p>
+                    <button class="btn" style="margin-top: 15px;" disabled>待开发</button>
+                </div>
+                <div class="category-card">
+                    <h3>数据统计</h3>
+                    <p>查看网站访问和使用统计</p>
+                    <button class="btn" style="margin-top: 15px;" disabled>待开发</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // 检查管理员权限
+            $.ajax({
+                url: 'api/check-login.php',
+                method: 'GET',
+                success: function(response) {
+                    if (!response.logged_in || !response.is_admin) {
+                        alert('您没有权限访问此页面');
+                        window.location.href = 'login.html';
+                    }
+                },
+                error: function() {
+                    alert('验证失败，请重新登录');
+                    window.location.href = 'login.html';
+                }
+            });
+            
+            // 退出登录
+            $('#logoutBtn').on('click', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: 'api/logout.php',
+                    method: 'POST',
+                    success: function() {
+                        window.location.href = 'index.html';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
