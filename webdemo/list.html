@@ -11,6 +11,8 @@
         <a href="list.html">建筑列表</a>
         <a href="quiz.html">问答</a>
         <a href="login.html">登录</a>
+        <a href="user-center.html">个人中心</a>
+        <a href="#" id="logoutBtn">退出登录</a>
     </div>
 
     <div class="container">
@@ -29,20 +31,24 @@
         <div id="list"></div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/main.js"></script>
     <script>
         // 获取URL参数
         const params = new URLSearchParams(window.location.search);
         const type = params.get('type');
-        if (type) document.getElementById('typeFilter').value = type;
+        if (type) $('#typeFilter').val(type);
 
         // 加载列表
         function loadList() {
-            const selectedType = document.getElementById('typeFilter').value;
+            const selectedType = $('#typeFilter').val();
             const url = 'api/get-architectures.php' + (selectedType ? '?type=' + selectedType : '');
             
-            fetch(url)
-                .then(r => r.json())
-                .then(data => {
+            $.ajax({
+                url: url,
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
                     let html = '';
                     data.data.forEach(item => {
                         html += '<div class="card">';
@@ -52,11 +58,12 @@
                         html += '<a href="detail.html?id=' + item.id + '" class="btn">查看详情</a>';
                         html += '</div>';
                     });
-                    document.getElementById('list').innerHTML = html;
-                });
+                    $('#list').html(html);
+                }
+            });
         }
 
-        document.getElementById('typeFilter').onchange = loadList;
+        $('#typeFilter').on('change', loadList);
         loadList();
     </script>
 </body>

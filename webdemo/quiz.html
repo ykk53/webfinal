@@ -11,6 +11,8 @@
         <a href="list.html">建筑列表</a>
         <a href="quiz.html">问答</a>
         <a href="login.html">登录</a>
+        <a href="user-center.html">个人中心</a>
+        <a href="#" id="logoutBtn">退出登录</a>
     </div>
 
     <div class="container">
@@ -26,6 +28,7 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/main.js"></script>
     <script>
         let currentQuiz = null;
         let correct = 0, wrong = 0;
@@ -65,9 +68,15 @@
             } else {
                 wrong++;
                 $('#wrong').text(wrong);
-                $('#result').html('<div class="error">错误！正确答案：' + currentQuiz.correct_answer + '</div>');
+                $('#result').html('<div class="error">错误！正确答案：' + currentQuiz.correct_answer + '<br></br>' + '解析：' + currentQuiz.explanation + '</div>');
             }
             $('input[name="ans"]').prop('disabled', true);
+            
+            $.post('api/submit-quiz.php', {
+                quiz_id: currentQuiz.id,
+                user_answer: ans,
+                is_correct: isCorrect ? 1 : 0
+            });
         }
 
         $(document).ready(function() {

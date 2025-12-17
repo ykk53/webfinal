@@ -68,8 +68,8 @@ webnewdemo/
 ├── index.html                    # 首页
 ├── login.html                    # 登录页
 ├── register.html                 # 注册页
-├── architecture-list.html        # 建筑列表页
-├── architecture-detail.html      # 建筑详情页
+├── list.html                     # 建筑列表页
+├── detail.html                   # 建筑详情页
 ├── quiz.html                     # 知识问答页
 ├── user-center.html              # 个人中心页
 └── README.md                     # 项目说明文档

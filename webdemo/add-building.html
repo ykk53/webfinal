@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>添加建筑 - 管理系统</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="page-index">
+    <div class="navbar">
+        <a href="manager.html">管理后台</a>
+        <a href="#" id="logoutBtn">退出管理端</a>
+    </div>
+
+    <div class="container">
+        <h1>添加建筑</h1>
+        
+        <form id="buildingForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>建筑名称：<span style="color:red">*</span></label>
+                <input type="text" id="buildingName" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label>建筑分类：<span style="color:red">*</span></label>
+                <select id="buildingType" name="type" required>
+                    <option value="">请选择分类</option>
+                    <option value="民宿">民宿</option>
+                    <option value="官府">官府</option>
+                    <option value="皇宫">皇宫</option>
+                    <option value="桥梁">桥梁</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>所属朝代：<span style="color:red">*</span></label>
+                <input type="text" id="buildingDynasty" name="dynasty" required placeholder="例如：明清、唐、宋">
+            </div>
+            
+            <div class="form-group">
+                <label>所在地点：<span style="color:red">*</span></label>
+                <input type="text" id="buildingLocation" name="location" required placeholder="例如：北京、河北赵县">
+            </div>
+            
+            <div class="form-group">
+                <label>建筑图片：<span style="color:red">*</span></label>
+                <input type="file" id="buildingImage" name="image" accept="image/*" required>
+                <div id="imagePreview" style="margin-top: 10px;"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>建筑简介：</label>
+                <textarea id="buildingDescription" name="description" rows="6" placeholder="请输入建筑的详细介绍..."></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn">提交</button>
+                <button type="button" class="btn" onclick="window.location.href='manager.html'">返回</button>
+            </div>
+        </form>
+        
+        <div id="message" style="margin-top: 20px;"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('#logoutBtn').show();
+        
+        $('#buildingImage').change(function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#imagePreview').html('<img src="' + e.target.result + '" style="max-width: 300px; max-height: 200px;">');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        $('#buildingForm').submit(function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            $.ajax({
+                url: 'api/admin/add-building-with-image.php',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        $('#message').html('<div class="success">添加成功！</div>');
+                        $('#buildingForm')[0].reset();
+                        $('#imagePreview').html('');
+                        setTimeout(function() {
+                            window.location.href = 'manager.html';
+                        }, 1500);
+                    } else {
+                        $('#message').html('<div class="error">添加失败：' + response.message + '</div>');
+                    }
+                },
+                error: function() {
+                    $('#message').html('<div class="error">提交失败，请重试</div>');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

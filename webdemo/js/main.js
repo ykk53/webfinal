@@ -6,11 +6,29 @@ function checkLoginStatus() {
         url: 'api/check-login.php',
         method: 'GET',
         success: function(response) {
-            if (response.success && response.logged_in) {
-                updateNavbar(response.username, response.is_admin);
+            if (response && response.success && response.logged_in) {
+                setNavbarAuthState(true);
+            } else {
+                setNavbarAuthState(false);
             }
+        },
+        error: function() {
+            setNavbarAuthState(false);
         }
     });
+}
+
+function setNavbarAuthState(loggedIn) {
+    const loginLinks = $('.navbar a[href="login.html"]');
+    const logoutLink = $('#logoutBtn');
+
+    if (loggedIn) {
+        loginLinks.hide();
+        logoutLink.show();
+    } else {
+        loginLinks.show();
+        logoutLink.hide();
+    }
 }
 
 // 更新导航栏
@@ -26,12 +44,6 @@ function updateNavbar(username, isAdmin) {
     html += '<a href="#" id="logoutBtn">退出</a>';
     
     userActions.html(html);
-    
-    // 绑定退出事件
-    $('#logoutBtn').on('click', function(e) {
-        e.preventDefault();
-        logout();
-    });
 }
 
 // 退出登录
@@ -59,11 +71,15 @@ function showMessage(element, message, type) {
 
 // 页面加载时检查登录状态
 $(document).ready(function() {
-    // 某些页面需要检查登录状态
-    const currentPage = window.location.pathname.split('/').pop();
-    const publicPages = ['index.html', 'login.html', 'register.html', 'architecture-list.html', 'architecture-detail.html'];
-    
-    if (!publicPages.includes(currentPage) && currentPage !== '') {
-        checkLoginStatus();
-    }
+    // 统一绑定退出事件（适配各页面导航栏里写死的 #logoutBtn）
+    $(document).off('click', '#logoutBtn').on('click', '#logoutBtn', function(e) {
+        e.preventDefault();
+        logout();
+    });
+
+    // 默认：未登录（先隐藏退出、显示登录），等 checkLoginStatus 返回后再切换
+    setNavbarAuthState(false);
+
+    // 所有页面都检查一次登录状态，用于统一切换“登录/退出”按钮
+    checkLoginStatus();
 });
