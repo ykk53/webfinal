@@ -63,12 +63,6 @@ function formatDate(dateString) {
     return date.toLocaleDateString('zh-CN');
 }
 
-// 显示消息
-function showMessage(element, message, type) {
-    const className = type === 'success' ? 'success' : 'error';
-    $(element).html(`<div class="message ${className}">${message}</div>`);
-}
-
 // 页面加载时检查登录状态
 $(document).ready(function() {
     // 统一绑定退出事件（适配各页面导航栏里写死的 #logoutBtn）
