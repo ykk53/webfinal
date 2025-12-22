@@ -2,33 +2,45 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>建筑列表</title>
+    <title>建筑列表 - 中国古代建筑</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src="js/markdown-parser.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="navbar">
-        <a href="index.html">首页</a>
-        <a href="list.html">建筑列表</a>
-        <a href="quiz.html">问答</a>
-        <a href="login.html">登录</a>
-        <a href="user-center.html">个人中心</a>
-        <a href="#" id="logoutBtn">退出登录</a>
+        <div class="navbar-brand">
+            中国古代建筑
+        </div>
+        <div class="navbar-menu">
+            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
+            <a href="list.html"><i class="fas fa-list"></i> 建筑列表</a>
+            <a href="quiz.html"><i class="fas fa-question-circle"></i> 问答</a>
+            <a href="login.html"><i class="fas fa-sign-in-alt"></i> 登录</a>
+            <a href="user-center.html"><i class="fas fa-user"></i> 个人中心</a>
+            <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+        </div>
     </div>
 
     <div class="container">
-        <h1>建筑列表</h1>
-        
-        <div class="card">
-            <select id="typeFilter">
-                <option value="">全部</option>
-                <option value="民宿">民宿</option>
-                <option value="官府">官府</option>
-                <option value="皇宫">皇宫</option>
-                <option value="桥梁">桥梁</option>
-            </select>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1><i class="fas fa-list-ul"></i> 建筑列表</h1>
+            
+            <div style="width: 200px;">
+                <select id="typeFilter">
+                    <option value="">全部类型</option>
+                    <option value="民宿">民宿</option>
+                    <option value="官府">官府</option>
+                    <option value="皇宫">皇宫</option>
+                    <option value="桥梁">桥梁</option>
+                </select>
+            </div>
         </div>
-
+        
         <div id="list"></div>
+    </div>
+
+    <div class="footer">
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -44,21 +56,25 @@
             const selectedType = $('#typeFilter').val();
             const url = 'api/get-architectures.php' + (selectedType ? '?type=' + selectedType : '');
             
+            $('#list').html('<p style="text-align:center; grid-column: 1 / -1; padding: 40px; color: var(--muted);"><i class="fas fa-spinner fa-spin"></i> 加载中...</p>');
+
             $.ajax({
                 url: url,
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
                     let html = '';
-                    data.data.forEach(item => {
-                        html += '<div class="card">';
-                        html += '<h3>' + item.name + '</h3>';
-                        html += '<p>' + item.type + ' | ' + (item.dynasty || '') + ' | ' + (item.location || '') + '</p>';
-                        html += '<p>' + (item.description || '') + '</p>';
-                        html += '<a href="detail.html?id=' + item.id + '" class="btn">查看详情</a>';
-                        html += '</div>';
-                    });
+                    if (data.data && data.data.length > 0) {
+                        data.data.forEach(item => {
+                            html += renderArchitectureCard(item);
+                        });
+                    } else {
+                        html = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--muted); background: var(--surface-strong); border-radius: var(--radius); border: 1px solid var(--border);"><i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i><p>没有找到相关建筑</p></div>';
+                    }
                     $('#list').html(html);
+                },
+                error: function() {
+                    $('#list').html('<div class="error" style="grid-column: 1 / -1;">加载失败，请稍后重试</div>');
                 }
             });
         }

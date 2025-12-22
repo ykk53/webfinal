@@ -5,45 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>个人中心 - 中国古代建筑</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, var(--surface-strong), rgba(255,255,255,0.6));
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--brand);
+            margin-bottom: 5px;
+        }
+        .stat-card .label {
+            color: var(--muted);
+            font-size: 0.9em;
+        }
+        .info-row {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-row i {
+            width: 24px;
+            color: var(--brand);
+            margin-right: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar">
-        <a href="index.html">首页</a>
-        <a href="list.html">建筑列表</a>
-        <a href="quiz.html">问答</a>
-        <a href="login.html">登录</a>
-        <a href="user-center.html">个人中心</a>
-        <a href="#" id="logoutBtn">退出登录</a>
+        <div class="navbar-brand">
+            中国古代建筑
+        </div>
+        <div class="navbar-menu">
+            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
+            <a href="list.html"><i class="fas fa-list"></i> 建筑列表</a>
+            <a href="quiz.html"><i class="fas fa-question-circle"></i> 问答</a>
+            <a href="login.html"><i class="fas fa-sign-in-alt"></i> 登录</a>
+            <a href="user-center.html" class="active"><i class="fas fa-user"></i> 个人中心</a>
+            <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+        </div>
     </div>
 
-    <!-- 用户信息 -->
     <div class="container">
-        <h1 class="page-title">个人中心</h1>
-        
-        <div class="user-info">
-            <h2 style="color: #8B0000; margin-bottom: 20px;">用户信息</h2>
-            <p><strong>用户名：</strong><span id="username">未登录</span></p>
-            <p><strong>邮箱：</strong><span id="email">-</span></p>
-            <p><strong>注册时间：</strong><span id="createdAt">-</span></p>
-        </div>
-        
-        <div class="user-info">
-            <h2 style="color: #8B0000; margin-bottom: 20px;">答题统计</h2>
-            <div class="user-stats">
-                <div class="stat-card">
-                    <div class="number" id="totalAnswers">0</div>
-                    <div class="label">总答题数</div>
+        <div class="card" style="padding: 30px; margin-bottom: 30px;">
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                <div style="width: 80px; height: 80px; background: var(--brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; margin-right: 20px;">
+                    <i class="fas fa-user"></i>
                 </div>
-                <div class="stat-card">
-                    <div class="number" id="correctAnswers">0</div>
-                    <div class="label">答对题数</div>
-                </div>
-                <div class="stat-card">
-                    <div class="number" id="accuracy">0%</div>
-                    <div class="label">正确率</div>
+                <div>
+                    <h1 style="margin: 0; font-size: 24px;">个人中心</h1>
+                    <p style="color: var(--muted); margin: 5px 0 0 0;">管理您的个人信息与学习进度</p>
                 </div>
             </div>
+            
+            <div class="info-row">
+                <i class="fas fa-id-card"></i>
+                <strong>用户名：</strong>
+                <span id="username" style="margin-left: 10px;">加载中...</span>
+            </div>
+            <div class="info-row">
+                <i class="fas fa-envelope"></i>
+                <strong>邮箱：</strong>
+                <span id="email" style="margin-left: 10px;">-</span>
+            </div>
+            <div class="info-row">
+                <i class="fas fa-calendar-alt"></i>
+                <strong>注册时间：</strong>
+                <span id="createdAt" style="margin-left: 10px;">-</span>
+            </div>
         </div>
+        
+        <h2 style="border-left: 4px solid var(--brand); padding-left: 12px; margin-bottom: 20px;">
+            <i class="fas fa-chart-pie" style="color: var(--brand);"></i> 学习统计
+        </h2>
+        
+        <div class="user-stats">
+            <div class="stat-card">
+                <div class="number" id="totalAnswers">0</div>
+                <div class="label"><i class="fas fa-pencil-alt"></i> 总答题数</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="correctAnswers" style="color: #155724;">0</div>
+                <div class="label"><i class="fas fa-check"></i> 答对题数</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="accuracy" style="color: var(--accent);">0%</div>
+                <div class="label"><i class="fas fa-percentage"></i> 正确率</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -62,14 +134,10 @@
                         
                         // 加载答题统计
                         loadQuizStats();
-                    } else {
-                        alert('请先登录');
-                        window.location.href = 'login.html';
                     }
                 },
                 error: function() {
-                    alert('加载失败，请先登录');
-                    window.location.href = 'login.html';
+                    // error handling
                 }
             });
         });

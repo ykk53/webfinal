@@ -11,8 +11,15 @@ if (!isLoggedIn()) {
 $conn = getDBConnection();
 $userId = getCurrentUserId();
 
-// 获取总答题数
-$stmt = $conn->prepare("SELECT COUNT(*) as total, SUM(is_correct) as correct FROM quiz_records WHERE user_id = ?");
+// 修复统计查询，确保基于正确答案统计
+$sql = "SELECT 
+            COUNT(*) as total, 
+            SUM(CASE WHEN qr.is_correct = 1 THEN 1 ELSE 0 END) as correct 
+        FROM quiz_records qr 
+        LEFT JOIN quizzes q ON qr.quiz_id = q.id 
+        WHERE qr.user_id = ?";
+
+$stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();

@@ -2,86 +2,267 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>知识问答</title>
+    <title>知识问答 - 中国古代建筑</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="navbar">
-        <a href="index.html">首页</a>
-        <a href="list.html">建筑列表</a>
-        <a href="quiz.html">问答</a>
-        <a href="login.html">登录</a>
-        <a href="user-center.html">个人中心</a>
-        <a href="#" id="logoutBtn">退出登录</a>
+        <div class="navbar-brand">
+            中国古代建筑
+        </div>
+        <div class="navbar-menu">
+            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
+            <a href="list.html"><i class="fas fa-list"></i> 建筑列表</a>
+            <a href="quiz.html" class="active"><i class="fas fa-question-circle"></i> 问答</a>
+            <a href="login.html"><i class="fas fa-sign-in-alt"></i> 登录</a>
+            <a href="user-center.html"><i class="fas fa-user"></i> 个人中心</a>
+            <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+        </div>
     </div>
 
-    <div class="container">
-        <h1>知识问答</h1>
+    <div class="container" style="max-width: 800px;">
+        <h1><i class="fas fa-graduation-cap"></i> 知识问答</h1>
         
-        <div class="card">
-            <p>答对：<strong id="correct">0</strong> | 答错：<strong id="wrong">0</strong></p>
+        <div class="card" style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-around; text-align: center;">
+                <div>
+                    <span style="display: block; font-size: 0.9em; color: var(--muted);">答对</span>
+                    <strong id="correct" style="font-size: 1.5em; color: #155724;">0</strong>
+                </div>
+                <div style="width: 1px; background: var(--border);"></div>
+                <div>
+                    <span style="display: block; font-size: 0.9em; color: var(--muted);">答错</span>
+                    <strong id="wrong" style="font-size: 1.5em; color: #721c24;">0</strong>
+                </div>
+                <div style="width: 1px; background: var(--border);"></div>
+                <div>
+                    <span style="display: block; font-size: 0.9em; color: var(--muted);">进度</span>
+                    <strong id="progress" style="font-size: 1.5em; color: var(--brand);">0/7</strong>
+                </div>
+            </div>
         </div>
 
-        <div class="card" id="quiz"></div>
+        <div class="card" id="quiz" style="min-height: 200px; padding: 30px; display: flex; flex-direction: column; justify-content: center;">
+            <p style="text-align: center; color: var(--muted);"><i class="fas fa-spinner fa-spin"></i> 题目加载中...</p>
+        </div>
         
-        <button class="btn" onclick="loadQuiz()">下一题</button>
+        <button class="btn" id="nextBtn" onclick="nextQuestion()" style="width: 100%; margin-top: 20px; font-size: 1.1em; display: none;">
+            下一题 <i class="fas fa-arrow-right"></i>
+        </button>
+
+        <!-- 积分排行榜 -->
+        <div class="card" style="margin-top: 30px;">
+            <h3 style="margin-top: 0; color: var(--brand);"><i class="fas fa-trophy"></i> 积分排行榜</h3>
+            <div id="rankingsList" style="max-height: 300px; overflow-y: auto;">
+                <p style="text-align: center; color: var(--muted);"><i class="fas fa-spinner fa-spin"></i> 排行榜加载中...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/main.js"></script>
     <script>
-        let currentQuiz = null;
-        let correct = 0, wrong = 0;
+    let quizzes = [];
+    let currentQuizIndex = 0;
+    let correct = 0, wrong = 0;
+    let isAnswered = false;
 
-        function loadQuiz() {
-            $.ajax({
-                url: 'api/get-quiz.php',
-                method: 'GET',
-                success: function(data) {
-                    currentQuiz = data.data;
-                    let html = '<h3>' + currentQuiz.question + '</h3>';
-                    html += '<ul class="list">';
-                    html += '<li><input type="radio" name="ans" value="A"> A. ' + currentQuiz.option_a + '</li>';
-                    html += '<li><input type="radio" name="ans" value="B"> B. ' + currentQuiz.option_b + '</li>';
-                    html += '<li><input type="radio" name="ans" value="C"> C. ' + currentQuiz.option_c + '</li>';
-                    html += '<li><input type="radio" name="ans" value="D"> D. ' + currentQuiz.option_d + '</li>';
-                    html += '</ul>';
-                    html += '<div id="result"></div>';
-                    $('#quiz').html(html);
-                    
-                    $('input[name="ans"]').on('click', function() {
-                        checkAnswer($(this).val());
-                    });
-                },
-                error: function() {
-                    $('#quiz').html('<div class="error">加载题目失败</div>');
+    function loadQuiz() {
+        $('#quiz').html('<p style="text-align: center; color: var(--muted); padding: 40px;"><i class="fas fa-spinner fa-spin"></i> 题目加载中...</p>');
+        
+        $.ajax({
+            url: 'api/get-quiz.php',
+            method: 'GET',
+            success: function(data) {
+                if (!data.success) {
+                    $('#quiz').html(`<div class="error"><i class="fas fa-exclamation-circle"></i> ${data.message || '加载失败'}</div>`);
+                    return;
                 }
-            });
-        }
-
-        function checkAnswer(ans) {
-            const isCorrect = ans === currentQuiz.correct_answer;
-            if (isCorrect) {
-                correct++;
-                $('#correct').text(correct);
-                $('#result').html('<div class="success">正确！</div>');
-            } else {
-                wrong++;
-                $('#wrong').text(wrong);
-                $('#result').html('<div class="error">错误！正确答案：' + currentQuiz.correct_answer + '<br></br>' + '解析：' + currentQuiz.explanation + '</div>');
+                
+                quizzes = data.data;
+                if (quizzes.length === 0) {
+                    $('#quiz').html('<div class="error"><i class="fas fa-exclamation-circle"></i> 暂无题目</div>');
+                    return;
+                }
+                
+                currentQuizIndex = 0;
+                correct = 0;
+                wrong = 0;
+                updateStats();
+                renderQuiz(currentQuizIndex);
+            },
+            error: function() {
+                $('#quiz').html('<div class="error"><i class="fas fa-exclamation-triangle"></i> 加载题目失败，请重试</div>');
             }
-            $('input[name="ans"]').prop('disabled', true);
-            
-            $.post('api/submit-quiz.php', {
-                quiz_id: currentQuiz.id,
-                user_answer: ans,
-                is_correct: isCorrect ? 1 : 0
-            });
-        }
-
-        $(document).ready(function() {
-            loadQuiz();
         });
-    </script>
+        
+        // 加载排行榜
+        loadRankings();
+    }
+
+    function renderQuiz(index) {
+        if (index >= quizzes.length) {
+            showFinalResult();
+            return;
+        }
+        
+        isAnswered = false;
+        $('#nextBtn').hide();
+        const quiz = quizzes[index];
+        let html = `<h3 style="margin-bottom: 20px; color: var(--brand);"><i class="fas fa-question-circle"></i> ${quiz.question}</h3>`;
+        html += '<ul class="list" style="border: none;">';
+        
+        const options = [
+            { key: 'A', val: quiz.option_a },
+            { key: 'B', val: quiz.option_b },
+            { key: 'C', val: quiz.option_c },
+            { key: 'D', val: quiz.option_d }
+        ];
+        
+        options.forEach(opt => {
+            html += `
+                <li style="padding: 12px; border: 1px solid var(--border); margin-bottom: 14px; border-radius: 10px; cursor: pointer; transition: all 0.2s; background: rgba(255, 255, 255, 0.92);" 
+                    onmouseover="this.style.borderColor='rgba(178, 27, 27, 0.55)'; this.style.boxShadow='var(--ring)'; this.style.backgroundColor='rgba(255, 255, 255, 0.98)'" 
+                    onmouseout="this.style.borderColor='var(--border)'; this.style.boxShadow='none'; this.style.backgroundColor='rgba(255, 255, 255, 0.92)'">
+                    <label style="display: flex; align-items: center; cursor: pointer; margin: 0; width: 100%;">
+                        <input type="radio" name="ans" value="${opt.key}" style="margin-right: 10px; width: auto;" onclick="if(!isAnswered) checkAnswer('${opt.key}')">
+                        <span style="font-weight: 500;">${opt.key}.</span>&nbsp;${opt.val}
+                    </label>
+                </li>`;
+        });
+        
+        html += '</ul>';
+        html += '<div id="result" style="margin-top: 20px;"></div>';
+        $('#quiz').html(html);
+    }
+
+   function checkAnswer(ans) {
+    isAnswered = true;
+    const quiz = quizzes[currentQuizIndex];
+    const isLast = currentQuizIndex === quizzes.length - 1;
+    
+    // 禁用所有选项防止重复点击
+    $('input[name="ans"]').prop('disabled', true);
+    
+    // 显示加载状态
+    $('#result').html('<p style="text-align: center; color: var(--muted);"><i class="fas fa-spinner fa-spin"></i> 提交中...</p>');
+    
+    // 提交答案到后端
+    $.ajax({
+        url: 'api/submit-quiz.php',
+        method: 'POST',
+        data: {
+            quiz_id: quiz.id,
+            user_answer: ans,
+            is_last: isLast ? 1 : 0
+        },
+        success: function(response) {
+            if (response.success) {
+                const isCorrect = response.is_correct;
+                if (isCorrect) {
+                    correct++;
+                    $('#result').html('<div class="success"><i class="fas fa-check-circle"></i> 回答正确！</div>');
+                } else {
+                    wrong++;
+                    $('#result').html(`<div class="error"><i class="fas fa-times-circle"></i> 回答错误！<br>正确答案：<strong>${quiz.correct_answer}</strong><br><small>${quiz.explanation || ''}</small></div>`);
+                }
+                updateStats();
+                $('#nextBtn').show();
+            } else {
+                $('#result').html('<div class="error"><i class="fas fa-exclamation-triangle"></i> 提交失败，请重试</div>');
+                $('input[name="ans"]').prop('disabled', false);
+                isAnswered = false;
+            }
+        },
+        error: function() {
+            $('#result').html('<div class="error"><i class="fas fa-exclamation-triangle"></i> 网络错误，请重试</div>');
+            $('input[name="ans"]').prop('disabled', false);
+            isAnswered = false;
+        }
+    });
+}
+
+    function nextQuestion() {
+        currentQuizIndex++;
+        renderQuiz(currentQuizIndex);
+    }
+
+    function showFinalResult() {
+        $('#quiz').html(`
+            <div style="text-align: center; padding: 20px;">
+                <h3><i class="fas fa-certificate" style="color: #ffc107;"></i> 答题完成！</h3>
+                <p style="font-size: 1.2em; margin: 20px 0;">您共答对 <strong style="color: #155724;">${correct}</strong> 题，获得 <strong style="color: var(--brand);">${correct}</strong> 积分</p>
+                <p>每天可参与一次答题，明天再来挑战吧！</p>
+            </div>
+        `);
+        $('#nextBtn').hide();
+    }
+
+    function updateStats() {
+        $('#correct').text(correct);
+        $('#wrong').text(wrong);
+        $('#progress').text(`${currentQuizIndex + 1}/${quizzes.length}`);
+    }
+
+    function loadRankings() {
+    $.get('api/get-rankings.php', function(res) {
+        if (res.success && res.data.length > 0) {
+            let html = '<ul class="rank-list" style="list-style: none; padding: 0;">';
+            res.data.forEach((user, index) => {
+                // 定义前三名称号
+                const titles = ['🏆🏆 冠军', '🥈🥈 亚军', '🥉🥉 季军'];
+                const title = index < 3 ? titles[index] : '';
+                
+                html += `<li class="rank-item ${index < 3 ? 'top-rank' : ''}" style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;">
+                    <span class="rank" style="width: 30px; text-align: center; font-weight: bold;">${index + 1}</span>
+                    <span class="username" style="flex: 1; margin: 0 10px;">${user.username} ${title}</span>
+                    <span class="points" style="color: #e91e63; font-weight: bold;">${user.points} 积分</span>
+                </li>`;
+            });
+            html += '</ul>';
+            $('#rankingsList').html(html);
+            
+            // 排行榜样式保持不变
+            const style = document.createElement('style');
+            style.textContent = `
+                .rank-item.top-rank:nth-child(1) { background-color: #fff8e1; }
+                .rank-item.top-rank:nth-child(2) { background-color: #f5f5f5; }
+                .rank-item.top-rank:nth-child(3) { background-color: #fff3e0; }
+            `;
+            document.head.appendChild(style);
+        } else {
+            $('#rankingsList').html('<p style="text-align: center; color: var(--muted);">暂无排名数据</p>');
+        }
+    }).fail(function() {
+        $('#rankingsList').html('<p style="text-align: center; color: var(--muted);">排行榜加载失败</p>');
+    });
+}
+
+$(document).ready(function() {
+    // 加载排行榜（无需登录）
+    loadRankings();
+    
+    // 检查登录状态
+    $.get('api/check-login.php', function(res) {
+        if (!res.logged_in) {
+            $('#quiz').html('<div style="text-align: center; padding: 40px;"><i class="fas fa-exclamation-circle" style="color: var(--brand); font-size: 24px;"></i><p style="margin-top: 15px;">请先登录再参与答题</p><button class="btn" onclick="window.location.href=\'login.html\'" style="margin-top: 10px;">去登录</button></div>');
+            return;
+        }
+        loadQuiz();
+    });
+
+    // 退出登录功能
+    $('#logoutBtn').click(function() {
+        $.get('api/logout.php', function() {
+            window.location.href = 'login.html';
+        });
+    });
+});
+</script>
+
 </body>
 </html>

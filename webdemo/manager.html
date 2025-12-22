@@ -2,59 +2,70 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>管理系统</title>
+    <title>管理系统 - 中国古代建筑</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .module { margin-bottom: 30px; }
+        .module h2 { display: flex; align-items: center; gap: 10px; margin-top: 0; }
+        .action-area button { margin-right: 10px; }
+        .search-area { background: rgba(255,255,255,0.5); padding: 10px; border-radius: 8px; margin-bottom: 15px; }
+        .search-area input { margin: 0 10px 0 0; width: auto; flex: 1; min-width: 200px; }
+    </style>
 </head>
 <body class="page-index">
     <div class="navbar">
-        <a href="manager.html">管理后台</a>
-        <a href="#" id="logoutBtn">退出管理端</a>
+        <div class="navbar-brand">
+            中国古代建筑
+        </div>
+        <div class="navbar-menu">
+            <a href="index.html" target="_blank"><i class="fas fa-external-link-alt"></i> 前台首页</a>
+            <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出管理端</a>
+        </div>
     </div>
 
-    <div class="container">
-        <h1>管理员控制台</h1>
+    <div class="container" style="max-width: 1200px;">
+        <h1 style="margin-bottom: 30px;"><i class="fas fa-tachometer-alt"></i> 管理员控制台</h1>
         
-        <!-- 用户管理模块 -->
-        <div class="module" id="userManagement">
-            <h2>用户管理</h2>
-            <div class="search-area">
-                <input type="text" id="searchUser" placeholder="搜索用户（用户名/邮箱）">
-                <button id="searchUserBtn">搜索</button>
-            </div>
-            <div class="user-list">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>用户ID</th>
-                            <th>用户名</th>
-                            <th>邮箱</th>
-                            <th>注册时间</th>
-                            <th>状态</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="userTableBody">
-                        <!-- 用户数据将在这里显示 -->
-                    </tbody>
-                </table>
+        <!-- 系统统计模块 -->
+        <div class="module" id="statistics">
+            <h2><i class="fas fa-chart-bar" style="color: var(--brand);"></i> 系统概览</h2>
+            <div class="stats-area" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div class="stat-item card" style="text-align: center; padding: 20px;">
+                    <i class="fas fa-users" style="font-size: 2em; color: var(--muted); margin-bottom: 10px;"></i>
+                    <div style="font-size: 2.5em; font-weight: bold; color: var(--brand);" id="totalUsers">0</div>
+                    <label>总用户数</label>
+                </div>
+                <div class="stat-item card" style="text-align: center; padding: 20px;">
+                    <i class="fas fa-landmark" style="font-size: 2em; color: var(--muted); margin-bottom: 10px;"></i>
+                    <div style="font-size: 2.5em; font-weight: bold; color: var(--brand);" id="totalBuildings">0</div>
+                    <label>总建筑数</label>
+                </div>
+                <div class="stat-item card" style="text-align: center; padding: 20px;">
+                    <i class="fas fa-question-circle" style="font-size: 2em; color: var(--muted); margin-bottom: 10px;"></i>
+                    <div style="font-size: 2.5em; font-weight: bold; color: var(--brand);" id="totalQA">0</div>
+                    <label>总问答数</label>
+                </div>
             </div>
         </div>
 
         <!-- 建筑管理模块 -->
         <div class="module" id="buildingManagement">
-            <h2>建筑管理</h2>
-            <div class="action-area">
-                <button onclick="window.location.href='add-building.html'">添加建筑</button>
+            <h2><i class="fas fa-gopuram" style="color: var(--brand);"></i> 建筑管理</h2>
+            <div class="action-area" style="margin-bottom: 15px;">
+                <button onclick="window.location.href='add-building.html'" class="btn">
+                    <i class="fas fa-plus"></i> 添加新建筑
+                </button>
             </div>
             <div class="search-area">
                 <input type="text" id="searchBuilding" placeholder="搜索建筑（名称/地点）">
-                <button id="searchBuildingBtn">搜索</button>
+                <button id="searchBuildingBtn"><i class="fas fa-search"></i> 搜索</button>
             </div>
-            <div class="building-list">
+            <div class="building-list" style="overflow-x: auto;">
                 <table>
                     <thead>
                         <tr>
-                            <th>建筑ID</th>
+                            <th>ID</th>
                             <th>建筑名称</th>
                             <th>地点</th>
                             <th>建造年份</th>
@@ -70,49 +81,82 @@
             </div>
         </div>
 
-        <!-- 问答管理模块 -->
-        <div class="module" id="qaManagement">
-            <h2>问答管理</h2>
-            <div class="search-area">
-                <input type="text" id="searchQA" placeholder="搜索问答（关键词）">
-                <button id="searchQABtn">搜索</button>
-            </div>
-            <div class="qa-list">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>问题ID</th>
-                            <th>用户</th>
-                            <th>问题内容</th>
-                            <th>回答数</th>
-                            <th>发布时间</th>
-                            <th>状态</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="qaTableBody">
-                        <!-- 问答数据将在这里显示 -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
+       <!-- 问答管理模块 -->
+<div class="module" id="qaManagement">
+    <h2><i class="fas fa-comments" style="color: var(--brand);"></i> 问答管理</h2>
+    <div class="action-area" style="margin-bottom: 15px;">
+        <button onclick="window.location.href='add-quiz.html'" class="btn">
+            <i class="fas fa-plus"></i> 添加新问题
+        </button>
+    </div>
+    <div class="search-area">
+        <input type="text" id="searchQA" placeholder="搜索问答（关键词）">
+        <button id="searchQABtn"><i class="fas fa-search"></i> 搜索</button>
+    </div>
+    <div class="qa-list" style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>问题内容</th>
+                    <th>选项A</th>
+                    <th>选项B</th>
+                    <th>选项C</th>
+                    <th>选项D</th>
+                    <th>正确答案</th>
+                    <th>解析说明</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="qaTableBody">
+                <!-- 问答数据将在这里显示 -->
+            </tbody>
+        </table>
+    </div>
+</div>
+  <!-- 用户管理模块 -->
+<div class="module" id="userManagement">
+    <h2><i class="fas fa-users-cog" style="color: var(--brand);"></i> 用户管理</h2>
+    <div class="search-area">
+        <input type="text" id="searchUser" placeholder="搜索用户（用户名/邮箱）">
+        <button id="searchUserBtn"><i class="fas fa-search"></i> 搜索</button>
+    </div>
+    <div class="user-list" style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>用户名</th>
+                    <th>邮箱</th>
+                    <th>注册时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                <!-- 用户数据将在这里显示 -->
+            </tbody>
+        </table>
+    </div>
+</div>
+    
         <!-- 答题记录管理模块 -->
         <div class="module" id="quizRecordsManagement">
-            <h2>答题记录管理</h2>
+            <h2><i class="fas fa-history" style="color: var(--brand);"></i> 答题记录</h2>
             <div class="search-area">
                 <input type="text" id="searchRecord" placeholder="搜索记录（用户名）">
-                <button id="searchRecordBtn">搜索</button>
+                <button id="searchRecordBtn"><i class="fas fa-search"></i> 搜索</button>
             </div>
-            <div class="record-list">
+            <div class="record-list" style="overflow-x: auto;">
                 <table>
                     <thead>
                         <tr>
-                            <th>记录ID</th>
+                            <th>ID</th>
                             <th>用户</th>
                             <th>题目</th>
                             <th>用户答案</th>
-                            <th>是否正确</th>
+                            <th>结果</th>
                             <th>答题时间</th>
                             <th>操作</th>
                         </tr>
@@ -123,25 +167,9 @@
                 </table>
             </div>
         </div>
+    </div>
 
-        <!-- 系统统计模块 -->
-        <div class="module" id="statistics">
-            <h2>系统统计</h2>
-            <div class="stats-area">
-                <div class="stat-item">
-                    <label>总用户数：</label>
-                    <span id="totalUsers">0</span>
-                </div>
-                <div class="stat-item">
-                    <label>总建筑数：</label>
-                    <span id="totalBuildings">0</span>
-                </div>
-                <div class="stat-item">
-                    <label>总问答数：</label>
-                    <span id="totalQA">0</span>
-                </div>
-            </div>
-        </div>
+    <div class="footer">
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -153,6 +181,20 @@
     let allRecords = [];
 
     $(document).ready(function() {
+        // 验证管理员权限
+        $.ajax({
+            url: 'api/check-login.php',
+            method: 'GET',
+            success: function(res) {
+                if (!res.logged_in || !res.is_admin) {
+                    alert('您没有权限访问此页面，请使用管理员账号登录');
+                    window.location.href = 'login.html';
+                }
+            },
+            error: function() {
+                window.location.href = 'login.html';
+            }
+        });
         
         loadAllData();
         
@@ -206,14 +248,21 @@
         });
     }
 
+    function updateStats() {
+        $('#totalUsers').text(allUsers.length);
+        $('#totalBuildings').text(allBuildings.length);
+        $('#totalQA').text(allQA.length);
+    }
+
     function displayUsers(users) {
         let html = '';
         users.forEach(function(u) {
             html += '<tr><td>' + u.id + '</td><td>' + u.username + '</td><td>' + u.email + '</td><td>' + 
-                    formatDate(u.created_at) + '</td><td>' + (u.status || '正常') + '</td><td>' +
-                    '<button onclick="deleteUser(' + u.id + ')">删除</button></td></tr>';
+                    formatDate(u.created_at) + '</td><td>' + (u.status ? '<span style="color:green">正常</span>' : '<span style="color:red">禁用</span>') + '</td><td>' +
+                    '<button onclick="toggleUserStatus(' + u.id + ', ' + (u.status ? 0 : 1) + ')" class="btn-secondary">' + 
+                    (u.status ? '禁用' : '启用') + '</button></td></tr>';
         });
-        $('#userTableBody').html(html || '<tr><td colspan="6">暂无数据</td></tr>');
+        $('#userTableBody').html(html || '<tr><td colspan="6" style="text-align:center; padding:20px;">暂无数据</td></tr>');
     }
 
     function filterUsers(keyword) {
@@ -226,29 +275,102 @@
         });
         displayUsers(filtered);
     }
+    // 修复用户管理函数
+function loadUsers() {
+    $.get('api/admin/get-users.php', function(res) {
+        if (res.success) {
+            allUsers = res.data || [];
+            displayUsers(allUsers);
+        } else {
+            alert('加载用户失败：' + (res.message || ''));
+        }
+    }).fail(function() {
+        alert('加载用户失败');
+    });
+}
 
-    function deleteUser(id) {
-        if (!confirm('确定删除？')) return;
-        $.post('api/admin/delete-user.php', {id: id}, function(res) {
+function toggleUserStatus(id, status) {
+    if (!confirm('确定要' + (status ? '启用' : '禁用') + '该用户吗？')) return;
+    
+    $.ajax({
+        url: 'api/admin/toggle-user-status.php',
+        method: 'POST',
+        data: { 
+            id: id, 
+            status: status 
+        },
+        success: function(res) {
+            if (res.success) {
+                alert('状态更新成功');
+                loadAllData(); // 重新加载数据刷新界面
+            } else {
+                alert('操作失败: ' + (res.message || '未知错误'));
+            }
+        },
+        error: function() {
+            alert('请求失败，请稍后重试');
+        }
+    });
+}
+// 修改displayUsers函数，正确显示状态
+function displayUsers(users) {
+    let html = '';
+    users.forEach(function(u) {
+        html += '<tr>' +
+                '<td>' + u.id + '</td>' +
+                '<td>' + u.username + '</td>' +
+                '<td>' + u.email + '</td>' +
+                '<td>' + formatDate(u.created_at) + '</td>' +
+                '<td>' + 
+                    (u.status == 1 ? 
+                        '<span style="color:green; font-weight:bold;">正常</span>' : 
+                        '<span style="color:red; font-weight:bold;">禁用</span>'
+                    ) + 
+                '</td>' +
+                '<td style="white-space: nowrap;">' +
+                    '<button onclick="toggleUserStatus(' + u.id + ', ' + (u.status == 1 ? 0 : 1) + ')" class="btn-secondary" style="margin-right: 5px;">' + 
+                        (u.status == 1 ? '禁用' : '启用') + 
+                    '</button>' +
+                    '<button onclick="deleteUser(' + u.id + ')" class="btn-danger">' +
+                        '<i class="fas fa-trash-alt"></i> 删除' +
+                    '</button>' +
+                '</td>' +
+                '</tr>';
+    });
+    $('#userTableBody').html(html || '<tr><td colspan="6" style="text-align:center; padding:20px;">暂无数据</td></tr>');
+}
+// 删除用户函数
+function deleteUser(id) {
+    if (!confirm('确定删除该用户？此操作将同时删除用户的答题记录和积分，且不可恢复！')) return;
+    
+    $.ajax({
+        url: 'api/admin/delete-user.php',
+        method: 'POST',
+        data: { id: id },
+        success: function(res) {
             if (res.success) {
                 alert('删除成功');
-                loadAllData();
+                loadAllData(); // 重新加载数据
             } else {
-                alert('删除失败');
+                alert('删除失败: ' + (res.message || '未知错误'));
             }
-        }).fail(function() {
-            alert('删除失败');
-        });
-    }
+        },
+        error: function() {
+            alert('删除失败，请重试');
+        }
+    });
+}
+
 
     function displayBuildings(buildings) {
         let html = '';
         buildings.forEach(function(b) {
             html += '<tr><td>' + b.id + '</td><td>' + b.name + '</td><td>' + b.location + '</td><td>' + 
                     b.year + '</td><td>' + (b.type || '') + '</td><td>' + formatDate(b.created_at) + '</td><td>' +
-                    '<button onclick="deleteBuilding(' + b.id + ')">删除</button></td></tr>';
+                    '<button onclick="editBuilding(' + b.id + ')" class="btn-primary"><i class="fas fa-edit"></i> 编辑</button> ' +
+                    '<button onclick="deleteBuilding(' + b.id + ')" class="btn-danger"><i class="fas fa-trash-alt"></i> 删除</button></td></tr>';
         });
-        $('#buildingTableBody').html(html || '<tr><td colspan="7">暂无数据</td></tr>');
+        $('#buildingTableBody').html(html || '<tr><td colspan="7" style="text-align:center; padding:20px;">暂无数据</td></tr>');
     }
 
     function filterBuildings(keyword) {
@@ -276,66 +398,96 @@
         });
     }
 
-    function displayQA(qaList) {
-        let html = '';
-        qaList.forEach(function(q) {
-            html += '<tr><td>' + q.id + '</td><td>' + q.username + '</td><td>' + q.question + '</td><td>' + 
-                    (q.answer_count || 0) + '</td><td>' + formatDate(q.created_at) + '</td><td>' + 
-                    (q.status || '正常') + '</td><td>' +
-                    '<button onclick="deleteQA(' + q.id + ')">删除</button></td></tr>';
-        });
-        $('#qaTableBody').html(html || '<tr><td colspan="7">暂无数据</td></tr>');
+    // 新增编辑建筑函数
+    function editBuilding(id) {
+        window.location.href = 'edit-building.html?id=' + id;
     }
 
-    function filterQA(keyword) {
-        if (!keyword) {
-            displayQA(allQA);
-            return;
+// 问答管理相关函数
+function displayQA(qaList) {
+    let html = '';
+    qaList.forEach(function(q) {
+        html += '<tr>' +
+                '<td>' + q.id + '</td>' +
+                '<td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">' + (q.question || '') + '</td>' +
+                '<td style="max-width: 100px;">' + (q.option_a || '') + '</td>' +
+                '<td style="max-width: 100px;">' + (q.option_b || '') + '</td>' +
+                '<td style="max-width: 100px;">' + (q.option_c || '') + '</td>' +
+                '<td style="max-width: 100px;">' + (q.option_d || '') + '</td>' +
+                '<td style="text-align: center; font-weight: bold; color: var(--brand);">' + (q.correct_answer || '') + '</td>' +
+                '<td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">' + (q.explanation || '') + '</td>' +
+                '<td>' + formatDate(q.created_at) + '</td>' +
+                '<td>' +
+                '<button onclick="editQuiz(' + q.id + ')" class="btn-primary" style="margin-right: 5px;"><i class="fas fa-edit"></i> 编辑</button>' +
+                '<button onclick="deleteQuiz(' + q.id + ')" class="btn-danger"><i class="fas fa-trash-alt"></i> 删除</button>' +
+                '</td>' +
+                '</tr>';
+    });
+    $('#qaTableBody').html(html || '<tr><td colspan="10" style="text-align:center; padding:20px;">暂无数据</td></tr>');
+}
+
+function filterQA(keyword) {
+    if (!keyword) {
+        displayQA(allQA);
+        return;
+    }
+    let filtered = allQA.filter(function(q) {
+        return (q.question && q.question.includes(keyword)) || 
+               (q.option_a && q.option_a.includes(keyword)) ||
+               (q.option_b && q.option_b.includes(keyword)) ||
+               (q.option_c && q.option_c.includes(keyword)) ||
+               (q.option_d && q.option_d.includes(keyword));
+    });
+    displayQA(filtered);
+}
+
+function editQuiz(id) {
+    window.location.href = 'edit-quiz.html?id=' + id;
+}
+
+function deleteQuiz(id) {
+    if (!confirm('确定删除该问题？')) return;
+    $.post('api/admin/delete-quiz.php', {id: id}, function(res) {
+        if (res.success) {
+            alert('删除成功');
+            loadAllData();
+        } else {
+            alert('删除失败：' + (res.message || ''));
         }
-        let filtered = allQA.filter(function(q) {
-            return q.question.includes(keyword) || q.username.includes(keyword);
-        });
-        displayQA(filtered);
-    }
+    }).fail(function() {
+        alert('删除失败');
+    });
+}
 
-    function deleteQA(id) {
-        if (!confirm('确定删除？')) return;
-        $.post('api/admin/delete-qa.php', {id: id}, function(res) {
-            if (res.success) {
-                alert('删除成功');
-                loadAllData();
-            } else {
-                alert('删除失败');
-            }
-        }).fail(function() {
-            alert('删除失败');
-        });
-    }
+// 绑定搜索事件
+$('#searchQABtn').click(function() {
+    filterQA($('#searchQA').val());
+});
 
-    function displayRecords(records) {
-        let html = '';
-        records.forEach(function(r) {
-            html += '<tr><td>' + r.id + '</td><td>' + (r.username || '未知') + '</td><td>' +
-                    (r.question || '').substring(0, 30) + '...</td><td>' + r.user_answer + '</td><td>' +
-                    (r.is_correct == 1 ? '正确' : '错误') + '</td><td>' + formatDate(r.created_at) + '</td><td>' +
-                    '<button onclick="deleteRecord(' + r.id + ')">删除</button></td></tr>';
-        });
-        $('#recordTableBody').html(html || '<tr><td colspan="7">暂无数据</td></tr>');
-    }
-
-    function filterRecords(keyword) {
-        if (!keyword) {
-            displayRecords(allRecords);
-            return;
-        }
-        let filtered = allRecords.filter(function(r) {
-            return r.username && r.username.includes(keyword);
-        });
-        displayRecords(filtered);
-    }
+function displayRecords(records) {
+    let html = '';
+    records.forEach(function(r) {
+        // 确保正确显示答题结果
+        const isCorrect = r.is_correct === true || r.is_correct === 1;
+        const resultText = isCorrect ? '<span style="color:green">正确</span>' : '<span style="color:red">错误</span>';
+        
+        html += '<tr>' +
+                '<td>' + r.id + '</td>' +
+                '<td>' + (r.username || '未知用户') + '</td>' +
+                '<td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">' + (r.question || '未知问题') + '</td>' +
+                '<td style="text-align: center; font-weight: bold;">' + (r.user_answer || '') + '</td>' +
+                '<td>' + resultText + '</td>' +
+                '<td>' + formatDate(r.created_at) + '</td>' +
+                '<td>' +
+                '<button onclick="deleteRecord(' + r.id + ')" class="btn-danger"><i class="fas fa-trash-alt"></i> 删除</button>' +
+                '</td>' +
+                '</tr>';
+    });
+    $('#recordTableBody').html(html || '<tr><td colspan="7" style="text-align:center; padding:20px;">暂无数据</td></tr>');
+}
 
     function deleteRecord(id) {
-        if (!confirm('确定删除？')) return;
+        if (!confirm('确定删除该记录？')) return;
         $.post('api/admin/delete-quiz-record.php', {id: id}, function(res) {
             if (res.success) {
                 alert('删除成功');
@@ -348,16 +500,10 @@
         });
     }
 
-    function updateStats() {
-        $('#totalUsers').text(allUsers.length);
-        $('#totalBuildings').text(allBuildings.length);
-        $('#totalQA').text(allQA.length);
-    }
-
     function formatDate(date) {
         let d = new Date(date);
         return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
     }
-</script>
+    </script>
 </body>
 </html>

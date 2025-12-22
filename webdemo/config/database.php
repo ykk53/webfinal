@@ -2,7 +2,7 @@
 // 数据库配置
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_PASS', '');  //根据需要修改
 define('DB_NAME', 'ancient_architecture');
 
 // 创建数据库连接

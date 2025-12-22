@@ -1,13 +1,17 @@
 <?php
 header('Content-Type: application/json');
 require_once '../../config/database.php';
-session_start();
+require_once '../../config/session.php';
+
+if (!isAdmin()) {
+    echo json_encode(array('success' => false, 'message' => '无权访问'));
+    exit;
+}
 
 $conn = getDBConnection();
-$sql = "SELECT q.id, q.question, NOW() as created_at, '正常' as status, '系统' as username, 
-        0 as answer_count 
-        FROM quizzes q 
-        ORDER BY q.id DESC";
+$sql = "SELECT id, question, option_a, option_b, option_c, option_d, correct_answer, explanation, created_at 
+        FROM quizzes 
+        ORDER BY id DESC";
 $result = $conn->query($sql);
 
 $qa = array();

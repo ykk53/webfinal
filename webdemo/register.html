@@ -2,39 +2,65 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>注册</title>
+    <title>注册 - 中国古代建筑</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="navbar">
-        <a href="index.html">首页</a>
-        <a href="list.html">建筑列表</a>
-        <a href="quiz.html">问答</a>
-        <a href="login.html">登录</a>
-        <a href="user-center.html">个人中心</a>
-        <a href="#" id="logoutBtn">退出登录</a>
+        <div class="navbar-brand">
+            中国古代建筑
+        </div>
+        <div class="navbar-menu">
+            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
+            <a href="list.html"><i class="fas fa-list"></i> 建筑列表</a>
+            <a href="quiz.html"><i class="fas fa-question-circle"></i> 问答</a>
+            <a href="login.html"><i class="fas fa-sign-in-alt"></i> 登录</a>
+            <a href="user-center.html"><i class="fas fa-user"></i> 个人中心</a>
+            <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+        </div>
     </div>
 
-    <div class="container">
-        <div class="card">
-            <h2>用户注册</h2>
+    <div class="container" style="max-width: 500px;">
+        <div class="card" style="padding: 30px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;"><i class="fas fa-user-plus"></i> 用户注册</h2>
+                <p style="color: var(--muted); margin-top: 5px;">创建您的账号，开启古建探索之旅</p>
+            </div>
+
             <div id="msg"></div>
             
             <form id="form">
-                <label>用户名</label>
-                <input type="text" id="username" required>
+                <label for="username">用户名</label>
+                <div style="position: relative;">
+                    <i class="fas fa-user" style="position: absolute; left: 12px; top: 14px; color: var(--muted);"></i>
+                    <input type="text" id="username" required style="padding-left: 36px;">
+                </div>
                 
-                <label>邮箱</label>
-                <input type="email" id="email" required>
+                <label for="email">邮箱</label>
+                <div style="position: relative;">
+                    <i class="fas fa-envelope" style="position: absolute; left: 12px; top: 14px; color: var(--muted);"></i>
+                    <input type="email" id="email" required style="padding-left: 36px;">
+                </div>
                 
-                <label>密码</label>
-                <input type="password" id="password" required>
+                <label for="password">密码</label>
+                <div style="position: relative;">
+                    <i class="fas fa-lock" style="position: absolute; left: 12px; top: 14px; color: var(--muted);"></i>
+                    <input type="password" id="password" required style="padding-left: 36px;">
+                </div>
                 
-                <button type="submit" class="btn">注册</button>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">
+                    <i class="fas fa-check"></i> 立即注册
+                </button>
             </form>
             
-            <p><a href="login.html">已有账号？登录</a></p>
+            <p style="text-align: center; margin-top: 20px; font-size: 0.9em;">
+                已有账号？ <a href="login.html">去登录</a>
+            </p>
         </div>
+    </div>
+
+    <div class="footer">
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -57,16 +83,16 @@
                     contentType: false,
                     success: function(res) {
                         if (res.success) {
-                            $('#msg').html('<div class="success">' + res.message + '</div>');
+                            $('#msg').html('<div class="success"><i class="fas fa-check-circle"></i> ' + res.message + '</div>');
                             setTimeout(function() {
                                 window.location.href = 'login.html';
                             }, 1000);
                         } else {
-                            $('#msg').html('<div class="error">' + res.message + '</div>');
+                            $('#msg').html('<div class="error"><i class="fas fa-exclamation-circle"></i> ' + res.message + '</div>');
                         }
                     },
                     error: function() {
-                        $('#msg').html('<div class="error">注册失败，请重试</div>');
+                        $('#msg').html('<div class="error"><i class="fas fa-exclamation-triangle"></i> 注册失败，请重试</div>');
                     }
                 });
             });

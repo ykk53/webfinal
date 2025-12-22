@@ -2,13 +2,14 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>添加建筑 - 管理系统</title>
+    <title>编辑建筑 - 管理系统</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .form-group { margin-bottom: 20px; }
         .form-group label { margin-bottom: 8px; font-weight: 500; }
-        #imagePreview img { border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); }
+        #imagePreview img { border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); max-width: 100%; }
+        .current-image { margin-bottom: 15px; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius); }
     </style>
 </head>
 <body class="page-index">
@@ -23,10 +24,14 @@
     </div>
 
     <div class="container" style="max-width: 800px;">
-        <h1 style="margin-bottom: 30px;"><i class="fas fa-plus-circle"></i> 添加新建筑</h1>
+        <h1 style="margin-bottom: 30px;"><i class="fas fa-edit"></i> 编辑建筑</h1>
+        
+        <div id="message"></div>
         
         <div class="card" style="padding: 30px;">
             <form id="buildingForm" enctype="multipart/form-data">
+                <input type="hidden" id="buildingId" name="id">
+                
                 <div class="form-group">
                     <label><i class="fas fa-heading" style="width: 20px; color: var(--muted);"></i> 建筑名称：<span style="color:red">*</span></label>
                     <input type="text" id="buildingName" name="name" required placeholder="例如：故宫太和殿">
@@ -54,9 +59,14 @@
                 </div>
                 
                 <div class="form-group">
-                    <label><i class="fas fa-image" style="width: 20px; color: var(--muted);"></i> 建筑图片：<span style="color:red">*</span></label>
+                    <label><i class="fas fa-image" style="width: 20px; color: var(--muted);"></i> 建筑图片：</label>
+                    <div class="current-image">
+                        <p>当前图片：</p>
+                        <img id="currentImage" src="" alt="当前图片" style="max-height: 200px;">
+                    </div>
                     <div style="background: rgba(0,0,0,0.02); padding: 20px; border: 2px dashed var(--border); border-radius: var(--radius); text-align: center;">
-                        <input type="file" id="buildingImage" name="image" accept="image/*" required style="border: none; background: transparent; padding: 0;">
+                        <input type="file" id="buildingImage" name="image" accept="image/*" style="border: none; background: transparent; padding: 0;">
+                        <p style="margin-top: 10px; color: var(--muted);">不修改图片请留空</p>
                         <div id="imagePreview" style="margin-top: 15px;"></div>
                     </div>
                 </div>
@@ -67,62 +77,74 @@
                 </div>
                 
                 <div class="form-actions" style="margin-top: 30px; display: flex; gap: 15px;">
-                    <button type="submit" class="btn" style="flex: 2;"><i class="fas fa-save"></i> 提交保存</button>
-                    <button type="button" class="btn" onclick="window.location.href='manager.html'" style="flex: 1; background: var(--muted);"><i class="fas fa-times"></i> 取消</button>
+                    <button type="submit" class="btn" style="flex: 2;"><i class="fas fa-save"></i> 保存修改</button>
+                    <button type="button" class="btn-secondary" style="flex: 1;" onclick="window.location.href='manager.html'"><i class="fas fa-times"></i> 取消</button>
                 </div>
             </form>
-            
-            <div id="message" style="margin-top: 20px;"></div>
         </div>
-    </div>
-
-    <div class="footer">
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/main.js"></script>
     <script>
     $(document).ready(function() {
-        // 验证管理员权限
-        $.ajax({
-            url: 'api/check-login.php',
-            method: 'GET',
-            success: function(res) {
-                if (!res.logged_in || !res.is_admin) {
-                    alert('您没有权限访问此页面，请使用管理员账号登录');
-                    window.location.href = 'login.html';
-                }
-            },
-            error: function() {
-                window.location.href = 'login.html';
-            }
-        });
-
-        $('#logoutBtn').show();
+        // 获取URL中的建筑ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const buildingId = urlParams.get('id');
         
-        $('#buildingImage').change(function() {
-            const file = this.files[0];
+        if (!buildingId) {
+            alert('参数错误');
+            window.location.href = 'manager.html';
+            return;
+        }
+        
+        // 加载建筑信息
+        $.get('api/admin/get-building.php?id=' + buildingId, function(res) {
+            if (res.success && res.data) {
+                const building = res.data;
+                $('#buildingId').val(building.id);
+                $('#buildingName').val(building.name);
+                $('#buildingType').val(building.type);
+                $('#buildingDynasty').val(building.dynasty);
+                $('#buildingLocation').val(building.location);
+                $('#buildingDescription').val(building.description);
+                $('#currentImage').attr('src', building.image || 'https://placehold.co/600x400/e0e0e0/333333?text=暂无图片');
+            } else {
+                alert('加载建筑信息失败：' + (res.message || ''));
+                window.location.href = 'manager.html';
+            }
+        }).fail(function() {
+            alert('加载建筑信息失败');
+            window.location.href = 'manager.html';
+        });
+        
+        // 图片预览
+        $('#buildingImage').change(function(e) {
+            const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    $('#imagePreview').html('<img src="' + e.target.result + '" style="max-width: 100%; max-height: 300px; object-fit: contain;">');
-                };
+                    $('#imagePreview').html('<img src="' + e.target.result + '" style="max-width: 300px; max-height: 200px;">');
+                }
                 reader.readAsDataURL(file);
+            } else {
+                $('#imagePreview').html('');
             }
         });
         
+        // 表单提交
         $('#buildingForm').submit(function(e) {
             e.preventDefault();
             
             // 显示加载状态
             const submitBtn = $(this).find('button[type="submit"]');
             const originalText = submitBtn.html();
-            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> 提交中...');
+            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> 保存中...');
             
             const formData = new FormData(this);
             
             $.ajax({
-                url: 'api/admin/add-building-with-image.php',
+                url: 'api/admin/update-building.php',
                 method: 'POST',
                 data: formData,
                 processData: false,
@@ -130,14 +152,12 @@
                 success: function(response) {
                     submitBtn.prop('disabled', false).html(originalText);
                     if (response.success) {
-                        $('#message').html('<div class="success"><i class="fas fa-check-circle"></i> 添加成功！正在跳转...</div>');
-                        $('#buildingForm')[0].reset();
-                        $('#imagePreview').html('');
+                        $('#message').html('<div class="success"><i class="fas fa-check-circle"></i> 修改成功！正在返回...</div>');
                         setTimeout(function() {
                             window.location.href = 'manager.html';
                         }, 1500);
                     } else {
-                        $('#message').html('<div class="error"><i class="fas fa-exclamation-circle"></i> 添加失败：' + response.message + '</div>');
+                        $('#message').html('<div class="error"><i class="fas fa-exclamation-circle"></i> 修改失败：' + response.message + '</div>');
                     }
                 },
                 error: function() {

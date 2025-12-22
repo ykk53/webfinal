@@ -1,10 +1,16 @@
 <?php
 header('Content-Type: application/json');
 require_once '../../config/database.php';
-session_start();
+require_once '../../config/session.php';
+
+if (!isAdmin()) {
+    echo json_encode(array('success' => false, 'message' => '无权访问'));
+    exit;
+}
 
 $conn = getDBConnection();
-$sql = "SELECT id, username, email, created_at, '正常' as status FROM users ORDER BY id DESC";
+// 修改查询语句，包含status字段
+$sql = "SELECT id, username, email, created_at, status FROM users ORDER BY id DESC";
 $result = $conn->query($sql);
 
 $users = array();

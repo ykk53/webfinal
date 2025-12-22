@@ -1,7 +1,12 @@
 <?php
 header('Content-Type: application/json');
 require_once '../../config/database.php';
-session_start();
+require_once '../../config/session.php';
+
+if (!isAdmin()) {
+    echo json_encode(array('success' => false, 'message' => '无权访问'));
+    exit;
+}
 
 $conn = getDBConnection();
 
