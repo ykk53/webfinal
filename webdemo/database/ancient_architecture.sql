@@ -1,25 +1,23 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.5
--- https://www.phpmyadmin.net/
+-- version 4.1.14
+-- http://www.phpmyadmin.net
 --
--- 主机： localhost
--- 生成日期： 2025-12-22 16:07:35
--- 服务器版本： 5.7.26
--- PHP 版本： 7.3.4
+-- Host: 127.0.0.1
+-- Generation Time: 2025-12-23 07:16:53
+-- 服务器版本： 5.6.17
+-- PHP Version: 5.5.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40101 SET NAMES utf8 */;
 
 --
--- 数据库： `ancient_architecture`
+-- Database: `ancient_architecture`
 --
 
 -- --------------------------------------------------------
@@ -28,16 +26,17 @@ SET time_zone = "+00:00";
 -- 表的结构 `architectures`
 --
 
-CREATE TABLE `architectures` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `architectures` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `type` enum('民宿','官府','皇宫','桥梁') NOT NULL,
   `dynasty` varchar(50) DEFAULT NULL,
   `location` varchar(100) DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
   `description` text,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=6 ;
 
 --
 -- 转存表中的数据 `architectures`
@@ -56,19 +55,23 @@ INSERT INTO `architectures` (`id`, `name`, `type`, `dynasty`, `location`, `image
 -- 表的结构 `daily_quiz_limit`
 --
 
-CREATE TABLE `daily_quiz_limit` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `daily_quiz_limit` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `quiz_date` date NOT NULL,
-  `completed` tinyint(1) DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `completed` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id` (`user_id`,`quiz_date`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=5 ;
 
 --
 -- 转存表中的数据 `daily_quiz_limit`
 --
 
 INSERT INTO `daily_quiz_limit` (`id`, `user_id`, `quiz_date`, `completed`) VALUES
-(1, 1, '2025-12-22', 0);
+(1, 1, '2025-12-22', 0),
+(4, 4, '2025-12-22', 0),
+(3, 3, '2025-12-22', 0);
 
 -- --------------------------------------------------------
 
@@ -76,8 +79,8 @@ INSERT INTO `daily_quiz_limit` (`id`, `user_id`, `quiz_date`, `completed`) VALUE
 -- 表的结构 `quizzes`
 --
 
-CREATE TABLE `quizzes` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `quizzes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `question` text NOT NULL,
   `option_a` varchar(255) NOT NULL,
   `option_b` varchar(255) NOT NULL,
@@ -85,8 +88,9 @@ CREATE TABLE `quizzes` (
   `option_d` varchar(255) NOT NULL,
   `correct_answer` enum('A','B','C','D') NOT NULL,
   `explanation` text,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=8 ;
 
 --
 -- 转存表中的数据 `quizzes`
@@ -107,14 +111,29 @@ INSERT INTO `quizzes` (`id`, `question`, `option_a`, `option_b`, `option_c`, `op
 -- 表的结构 `quiz_records`
 --
 
-CREATE TABLE `quiz_records` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `quiz_records` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `quiz_id` int(11) NOT NULL,
   `user_answer` enum('A','B','C','D') NOT NULL,
   `is_correct` tinyint(1) NOT NULL,
-  `answered_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `answered_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `quiz_id` (`quiz_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=32 ;
+
+--
+-- 转存表中的数据 `quiz_records`
+--
+
+INSERT INTO `quiz_records` (`id`, `user_id`, `quiz_id`, `user_answer`, `is_correct`, `answered_at`) VALUES
+(10, 1, 1, 'A', 0, '2025-12-22 13:35:44'),
+(11, 1, 1, 'A', 0, '2025-12-22 13:35:51'),
+(12, 1, 1, 'A', 0, '2025-12-22 13:36:05'),
+(29, 3, 5, 'C', 0, '2025-12-22 13:51:16'),
+(30, 3, 6, 'C', 0, '2025-12-22 13:51:19'),
+(31, 3, 1, 'C', 1, '2025-12-22 13:51:20');
 
 -- --------------------------------------------------------
 
@@ -122,22 +141,26 @@ CREATE TABLE `quiz_records` (
 -- 表的结构 `users`
 --
 
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `email` varchar(100) NOT NULL,
   `is_admin` tinyint(1) DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` tinyint(1) DEFAULT '1' COMMENT '用户状态：1正常，0禁用'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `status` tinyint(1) DEFAULT '1' COMMENT '用户状态：1正常，0禁用',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=5 ;
 
 --
 -- 转存表中的数据 `users`
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `is_admin`, `created_at`, `status`) VALUES
-(1, 'admin', '$2y$10$9CvVLiMsgyFxDFPKMmkBDeXyUJJrXUA7wMx.8fViax1li3irvHT4y', 'admin@example.com', 1, '2025-12-22 08:04:02', 1);
+(1, 'admin', '$2y$10$9CvVLiMsgyFxDFPKMmkBDeXyUJJrXUA7wMx.8fViax1li3irvHT4y', 'admin@example.com', 1, '2025-12-22 08:04:02', 1),
+(3, 'ykk2', '$2y$10$jgCaeJmyCEdWsSG9Z5UGL.8p4NXkZEVCdbumYIgH7JiCDOiSrdd.O', '2104927902@qq.com', 0, '2025-12-22 13:51:08', 1),
+(4, 'ykk', '$2y$10$cIQ9meoGRaGNSOwiBr3pCe8oahcWBWwEg8rp8AL6SRAnDb/ZWWUdS', '2104927902@qq.com', 0, '2025-12-22 15:07:17', 1);
 
 -- --------------------------------------------------------
 
@@ -145,105 +168,21 @@ INSERT INTO `users` (`id`, `username`, `password`, `email`, `is_admin`, `created
 -- 表的结构 `user_points`
 --
 
-CREATE TABLE `user_points` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `user_points` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `points` int(11) DEFAULT '0',
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=3 ;
 
 --
--- 转储表的索引
+-- 转存表中的数据 `user_points`
 --
 
---
--- 表的索引 `architectures`
---
-ALTER TABLE `architectures`
-  ADD PRIMARY KEY (`id`);
-
---
--- 表的索引 `daily_quiz_limit`
---
-ALTER TABLE `daily_quiz_limit`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `user_id` (`user_id`,`quiz_date`);
-
---
--- 表的索引 `quizzes`
---
-ALTER TABLE `quizzes`
-  ADD PRIMARY KEY (`id`);
-
---
--- 表的索引 `quiz_records`
---
-ALTER TABLE `quiz_records`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `quiz_id` (`quiz_id`);
-
---
--- 表的索引 `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`);
-
---
--- 表的索引 `user_points`
---
-ALTER TABLE `user_points`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- 在导出的表使用AUTO_INCREMENT
---
-
---
--- 使用表AUTO_INCREMENT `architectures`
---
-ALTER TABLE `architectures`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- 使用表AUTO_INCREMENT `daily_quiz_limit`
---
-ALTER TABLE `daily_quiz_limit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- 使用表AUTO_INCREMENT `quizzes`
---
-ALTER TABLE `quizzes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- 使用表AUTO_INCREMENT `quiz_records`
---
-ALTER TABLE `quiz_records`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- 使用表AUTO_INCREMENT `user_points`
---
-ALTER TABLE `user_points`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- 限制导出的表
---
--- 注意：已移除 quiz_records 表的外键约束，以便更灵活地处理用户数据
--- 即使用户被删除，答题记录也会保留，符合实际应用场景
-
-COMMIT;
+INSERT INTO `user_points` (`id`, `user_id`, `points`, `updated_at`) VALUES
+(2, 3, 1, '2025-12-22 13:51:20');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

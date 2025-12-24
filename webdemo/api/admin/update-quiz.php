@@ -8,14 +8,14 @@ if (!isAdmin()) {
     exit;
 }
 
-$$id = isset($_POST['id']) ? $_POST['id'] : 0;
-$$question = isset($_POST['question']) ? $_POST['question'] : '';
-$$option_a = isset($_POST['option_a']) ? $_POST['option_a'] : '';
-$$option_b = isset($_POST['option_b']) ? $_POST['option_b'] : '';
-$$option_c = isset($_POST['option_c']) ? $_POST['option_c'] : '';
-$$option_d = isset($_POST['option_d']) ? $_POST['option_d'] : '';
-$$correct_answer = isset($_POST['correct_answer']) ? $_POST['correct_answer'] : '';
-$$explanation = isset($_POST['explanation']) ? $_POST['explanation'] : '';
+$id = isset($_POST['id']) ? $_POST['id'] : 0;
+$question = isset($_POST['question']) ? $_POST['question'] : '';
+$option_a = isset($_POST['option_a']) ? $_POST['option_a'] : '';
+$option_b = isset($_POST['option_b']) ? $_POST['option_b'] : '';
+$option_c = isset($_POST['option_c']) ? $_POST['option_c'] : '';
+$option_d = isset($_POST['option_d']) ? $_POST['option_d'] : '';
+$correct_answer = isset($_POST['correct_answer']) ? $_POST['correct_answer'] : '';
+$explanation = isset($_POST['explanation']) ? $_POST['explanation'] : '';
 
 if (empty($id) || empty($question) || empty($option_a) || empty($option_b) || empty($option_c) || empty($option_d) || empty($correct_answer)) {
     echo json_encode(array('success' => false, 'message' => '缺少必填字段'));

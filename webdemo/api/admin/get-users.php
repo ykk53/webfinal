@@ -10,7 +10,7 @@ if (!isAdmin()) {
 
 $conn = getDBConnection();
 // 修改查询语句，包含status字段
-$sql = "SELECT id, username, email, created_at, status FROM users ORDER BY id DESC";
+$sql = "SELECT id, username, email, created_at, status FROM users WHERE is_admin = 0 ORDER BY id DESC";
 $result = $conn->query($sql);
 
 $users = array();

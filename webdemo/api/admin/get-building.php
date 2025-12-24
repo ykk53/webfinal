@@ -8,7 +8,7 @@ if (!isAdmin()) {
     exit;
 }
 
-$$id = isset($_GET['id']) ? $_GET['id'] : 0;
+$id = isset($_GET['id']) ? $_GET['id'] : 0;
 
 if (empty($id)) {
     echo json_encode(array('success' => false, 'message' => '缺少建筑ID'));

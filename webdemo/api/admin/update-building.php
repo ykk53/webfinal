@@ -8,12 +8,12 @@ if (!isAdmin()) {
     exit;
 }
 
-$$id = isset($_POST['id']) ? $_POST['id'] : 0;
-$$name = isset($_POST['name']) ? $_POST['name'] : '';
-$$type = isset($_POST['type']) ? $_POST['type'] : '';
-$$dynasty = isset($_POST['dynasty']) ? $_POST['dynasty'] : '';
-$$location = isset($_POST['location']) ? $_POST['location'] : '';
-$$description = isset($_POST['description']) ? $_POST['description'] : '';
+$id = isset($_POST['id']) ? $_POST['id'] : 0;
+$name = isset($_POST['name']) ? $_POST['name'] : '';
+$type = isset($_POST['type']) ? $_POST['type'] : '';
+$dynasty = isset($_POST['dynasty']) ? $_POST['dynasty'] : '';
+$location = isset($_POST['location']) ? $_POST['location'] : '';
+$description = isset($_POST['description']) ? $_POST['description'] : '';
 
 if (empty($id) || empty($name) || empty($type) || empty($dynasty) || empty($location)) {
     echo json_encode(array('success' => false, 'message' => '缺少必填字段'));
